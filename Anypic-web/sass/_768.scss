@@ -20,7 +20,7 @@
 }
 
 .leather {
-  background: $beige url('/images/leather_bg.jpg');
+  background: $beige url('../images/leather_bg.jpg');
   background-repeat: repeat-x;
   background-position: center top;
   @include background-size(1400px 626px);

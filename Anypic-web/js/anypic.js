@@ -66,13 +66,9 @@ $(function() {
       // Create our collection of Photos
       this.photos = new PhotoList();
 
-      var parseEmployeeQuery = new Parse.Query(Parse.User);
-      parseEmployeeQuery.containedIn("facebookId", [ "400680", "403902", "702499", "1225726", "3622585", "4806789", "6409809", "121800083", "500011038", "558159381", "721873341", "723748661", "865225242" ]);
-
-      // Setup the query for the collection to look for the 8 most recent photos
       this.photos.query = new Parse.Query(Photo);
       this.photos.query.include("user");
-      this.photos.query.matchesQuery("user", parseEmployeeQuery);
+      this.photos.query.containedIn("objectId", [ "4gB0XAJbLk", "4CjK9FVyT3", "iZOJSuHuyI", "BseKsSmrLd", "0es6kh9HIm", "Zy8OepHflE", "K3TsxvQdQQ", "pqziIGZt29"]);
 
       this.photos.query.limit(8);
       this.photos.query.descending("createdAt");
@@ -114,7 +110,7 @@ $(function() {
 
       $("#slides").slides({
         preload: true,
-        preloadImage: '/images/spinner.gif',
+        preloadImage: 'images/spinner.gif',
         play: 3000,
         pause: 2500,
         hoverPause: true
