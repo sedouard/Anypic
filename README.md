@@ -18,8 +18,8 @@ Anypic requires Xcode 4.3+. It runs on iOS 5.0 and newer. The [tutorial](https:/
 3. Copy your new app's application id and client key into `AppDelegate.m`:
 
 ```objective-c
- [Parse setApplicationId:@"APPLICATION_ID" clientKey:@"CLIENT_KEY];"
- ```
+[Parse setApplicationId:@"APPLICATION_ID" clientKey:@"CLIENT_KEY];"
+```
 
 #### Configuring Anypic's Facebook integration
 
@@ -45,7 +45,7 @@ Anypic is built on top of the [Parse JavaScript SDK](https://parse.com/docs/js_g
 To get started, copy your app's id and JavaScript key into `anypic.js`:
 
 ```javascript
-  Parse.initialize("APPLICATION_ID", "JAVASCRIPT_KEY");
+Parse.initialize("APPLICATION_ID", "JAVASCRIPT_KEY");
 ```
 
 You'll notice that there is only one index.html, however Anypic's website displays different content for the homepage and for a single photo's landing page. This is accomplished using [Backbone.js](http://backbonejs.org/)'s `Backbone.Router`. The following lines set up the two routes:
