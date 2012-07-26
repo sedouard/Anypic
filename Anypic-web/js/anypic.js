@@ -1,7 +1,7 @@
 $(function() {
   Parse.$ = jQuery;
 
-  Parse.initialize("PklSbwxITu46cOumt6tdWw8Jtg2urg0vj0CrbLr0", "ipsJoKYYfvE0Fmlu3ThuUQOKdJ79jbuATO2AhmEg");
+  Parse.initialize("APP_ID", "JAVASCRIPT_KEY");
 
   // Photo Model
   // -----------
@@ -66,9 +66,9 @@ $(function() {
       // Create our collection of Photos
       this.photos = new PhotoList();
 
+      // Show the latest photos uploaded to Anypic
       this.photos.query = new Parse.Query(Photo);
       this.photos.query.include("user");
-      this.photos.query.containedIn("objectId", [ "4gB0XAJbLk", "4CjK9FVyT3", "iZOJSuHuyI", "BseKsSmrLd", "0es6kh9HIm", "Zy8OepHflE", "K3TsxvQdQQ", "pqziIGZt29"]);
 
       this.photos.query.limit(8);
       this.photos.query.descending("createdAt");
