@@ -1,7 +1,8 @@
 $(function() {
   Parse.$ = jQuery;
 
-  Parse.initialize("APP_ID", "JAVASCRIPT_KEY");
+  //  Copy your application id and JavaScript Key into the following line, and uncomment it.
+  //  Parse.initialize("APPLICATION_ID", "JAVASCRIPT_KEY");
 
   // Photo Model
   // -----------

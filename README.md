@@ -42,6 +42,12 @@ The main Anypic site is at Anypic-web/index.html. The site will show the last ei
 
 Anypic is built on top of the [Parse JavaScript SDK](https://parse.com/docs/js_guide). The main JavaScript file is at `Anypic-web/js/anypic.js`.
 
+To get started, copy your app's id and JavaScript key into `anypic.js`:
+
+```javascript
+  Parse.initialize("APPLICATION_ID", "JAVASCRIPT_KEY");
+```
+
 You'll notice that there is only one index.html, however Anypic's website displays different content for the homepage and for a single photo's landing page. This is accomplished using [Backbone.js](http://backbonejs.org/)'s `Backbone.Router`. The following lines set up the two routes:
 
 ```javascript
