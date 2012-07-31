@@ -263,9 +263,14 @@
 
             if (!error) {
                 [MBProgressHUD hideHUDForView:self.navController.presentedViewController.view animated:NO];
-                self.hud = [MBProgressHUD showHUDAddedTo:self.homeViewController.view animated:NO];
-                [self.hud setDimBackground:YES];
-                [self.hud setLabelText:@"Following Friends"];
+                
+                if (anypicFriends.count > 0) {
+                    self.hud = [MBProgressHUD showHUDAddedTo:self.homeViewController.view animated:NO];
+                    [self.hud setDimBackground:YES];
+                    [self.hud setLabelText:@"Following Friends"];
+                } else {
+                    [self.homeViewController loadObjects];
+                }
             }
         }
         
