@@ -37,6 +37,7 @@
         
         PFACL *likeACL = [PFACL ACLWithUser:[PFUser currentUser]];
         [likeACL setPublicReadAccess:YES];
+        [likeACL setWriteAccess:YES forUser:[photo objectForKey:kPAPPhotoUserKey]];
         likeActivity.ACL = likeACL;
 
         [likeActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {

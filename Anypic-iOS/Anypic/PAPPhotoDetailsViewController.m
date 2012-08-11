@@ -208,6 +208,7 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
         
         PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
         [ACL setPublicReadAccess:YES];
+        [ACL setWriteAccess:YES forUser:[self.photo objectForKey:kPAPPhotoUserKey]];
         comment.ACL = ACL;
 
         [[PAPCache sharedCache] incrementCommentCountForPhoto:self.photo];
