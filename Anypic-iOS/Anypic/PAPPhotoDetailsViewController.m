@@ -208,6 +208,7 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
         
         PFACL *ACL = [PFACL ACLWithUser:[PFUser currentUser]];
         [ACL setPublicReadAccess:YES];
+        [ACL setWriteAccess:YES forUser:[self.photo objectForKey:kPAPPhotoUserKey]];
         comment.ACL = ACL;
 
         [[PAPCache sharedCache] incrementCommentCountForPhoto:self.photo];
@@ -239,7 +240,8 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
                         [channelSet addObject:privateChannelName];
                     }
                 }
-                [channelSet addObject:[self.photo objectForKey:kPAPPhotoUserKey]];
+                //[channelSet addObject:[self.photo objectForKey:kPAPPhotoUserKey]];
+                [channelSet addObject:[[self.photo objectForKey:kPAPPhotoUserKey] objectForKey: kPAPUserPrivateChannelKey]];
                 
                 if (channelSet.count > 0) {
                     NSString *alert = [NSString stringWithFormat:@"%@: %@", [PAPUtility firstNameForDisplayName:[[PFUser currentUser] objectForKey:kPAPUserDisplayNameKey]], trimmedComment];
