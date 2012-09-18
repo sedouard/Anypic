@@ -416,7 +416,7 @@
     
     // Draw shadow
     [[UIColor blackColor] setFill];
-    CGContextSetShadow(context, CGSizeMake( 0.0f, 0.0f), 7.0f);
+    CGContextSetShadow(context, CGSizeMake(0.0f, 0.0f), 7.0f);
     CGContextFillRect(context, CGRectMake(rect.origin.x, 
                                           rect.origin.y, 
                                           rect.size.width, 
@@ -439,7 +439,7 @@
     
     // Draw shadow
     [[UIColor blackColor] setFill];
-    CGContextSetShadow(context, CGSizeMake( 0.0f, 0.0f), 7.0f);
+    CGContextSetShadow(context, CGSizeMake(0.0f, 0.0f), 7.0f);
     CGContextFillRect(context, CGRectMake(rect.origin.x, 
                                           rect.origin.y - 5.0f, 
                                           rect.size.width, 

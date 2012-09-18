@@ -14,6 +14,11 @@
     id _delegate;
 }
 
+/*! 
+ Unfortunately, objective-c does not allow you to redefine the type of a property,
+ so we cannot set the type of the delegate here. Doing so would mean that the subclass
+ of would not be able to define new delegate methods (which we do in PAPActivityCell).
+ */
 @property (nonatomic, strong) id delegate;
 
 /*! The user represented in the cell */

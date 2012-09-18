@@ -7,15 +7,14 @@
 //
 
 #import "PAPBaseTextCell.h"
-
 @protocol PAPActivityCellDelegate;
 
 @interface PAPActivityCell : PAPBaseTextCell
 
-/*! Setter for the activity associated with this cell */
+/*!Setter for the activity associated with this cell */
 @property (nonatomic, strong) PFObject *activity;
 
-/*! Set the new state. This changes the background of the cell. */
+/*!Set the new state. This changes the background of the cell. */
 - (void)setIsNew:(BOOL)isNew;
 
 @end

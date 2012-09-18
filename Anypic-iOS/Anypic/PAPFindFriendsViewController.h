@@ -10,6 +10,6 @@
 #import <MessageUI/MessageUI.h>
 #import "PAPFindFriendsCell.h"
 
-@interface PAPFindFriendsViewController : PFQueryTableViewController <PF_FBRequestDelegate, PAPFindFriendsCellDelegate, ABPeoplePickerNavigationControllerDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate, UIActionSheetDelegate>
+@interface PAPFindFriendsViewController : PFQueryTableViewController <PAPFindFriendsCellDelegate, ABPeoplePickerNavigationControllerDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate, UIActionSheetDelegate>
 
 @end

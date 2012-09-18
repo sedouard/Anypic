@@ -10,8 +10,18 @@
 
 @implementation PAPLogInViewController
 
+#pragma mark - UIViewController
+
 - (void)viewDidLoad {
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Default.png"]];
+    [super viewDidLoad];
+
+    // There is no documentation on how to handle assets with the taller iPhone 5 screen as of 9/13/2012
+    if ([UIScreen mainScreen].bounds.size.height > 480.0f) {
+        // for the iPhone 5
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BackgroundLogin-568h.png"]];
+    } else {
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BackgroundLogin.png"]];
+    }
     
     NSString *text = @"Sign up and start sharing your story with your friends.";
     CGSize textSize = [text sizeWithFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:18.0f] constrainedToSize:CGSizeMake( 255.0f, CGFLOAT_MAX) lineBreakMode:UILineBreakModeWordWrap];
@@ -25,7 +35,7 @@
     [textLabel setTextAlignment:UITextAlignmentCenter];
 
     [self.logInView setLogo:nil];
-    [self.logInView addSubview:textLabel]; 
+    [self.logInView addSubview:textLabel];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {

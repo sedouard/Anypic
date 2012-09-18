@@ -12,6 +12,9 @@ typedef enum {
 	PAPActivityTabBarItemIndex = 2
 } PAPTabBarControllerViewControllerIndex;
 
+// The App Store version of Anypic will autofollow all Parse employees by matching based on their PFUser facebookId key. You can add your own Facebook ID here and any new users will autofollow any PFUser which has this Facebook ID set.
+#define kPAPAutoFollowUserFacebookIds [NSArray array]
+
 #pragma mark - NSUserDefaults
 extern NSString *const kPAPUserDefaultsActivityFeedViewControllerLastRefreshKey;
 extern NSString *const kPAPUserDefaultsCacheFacebookFriendsKey;
@@ -70,6 +73,7 @@ extern NSString *const kPAPUserFacebookIDKey;
 extern NSString *const kPAPUserPhotoIDKey;
 extern NSString *const kPAPUserProfilePicSmallKey;
 extern NSString *const kPAPUserProfilePicMediumKey;
+extern NSString *const kPAPUserFacebookFriendsKey;
 extern NSString *const kPAPUserAlreadyAutoFollowedFacebookFriendsKey;
 extern NSString *const kPAPUserPrivateChannelKey;
 
@@ -82,6 +86,7 @@ extern NSString *const kPAPPhotoClassKey;
 extern NSString *const kPAPPhotoPictureKey;
 extern NSString *const kPAPPhotoThumbnailKey;
 extern NSString *const kPAPPhotoUserKey;
+extern NSString *const kPAPPhotoOpenGraphIDKey;
 
 
 #pragma mark - Cached Photo Attributes

@@ -35,8 +35,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:PAPPhotoDetailsViewControllerUserDeletedPhotoNotification object:nil];
 }
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
+- (id)initWithStyle:(UITableViewStyle)style {
     self = [super initWithStyle:style];
     if (self) {
         
@@ -128,7 +127,7 @@
     [headerView.likeButton setTag:section];
     
     NSDictionary *attributesForPhoto = [[PAPCache sharedCache] attributesForPhoto:photo];
-                                        
+
     if (attributesForPhoto) {
         [headerView setLikeStatus:[[PAPCache sharedCache] isPhotoLikedByCurrentUser:photo]];
         [headerView.likeButton setTitle:[[[PAPCache sharedCache] likeCountForPhoto:photo] description] forState:UIControlStateNormal];
@@ -254,6 +253,7 @@
     PFQuery *followingActivitiesQuery = [PFQuery queryWithClassName:kPAPActivityClassKey];
     [followingActivitiesQuery whereKey:kPAPActivityTypeKey equalTo:kPAPActivityTypeFollow];
     [followingActivitiesQuery whereKey:kPAPActivityFromUserKey equalTo:[PFUser currentUser]];
+    followingActivitiesQuery.cachePolicy = kPFCachePolicyNetworkOnly;
     followingActivitiesQuery.limit = 1000;
     
     PFQuery *photosFromFollowedUsersQuery = [PFQuery queryWithClassName:self.className];
@@ -278,7 +278,7 @@
     if (self.objects.count == 0 || ![[UIApplication sharedApplication].delegate performSelector:@selector(isParseReachable)]) {
         [query setCachePolicy:kPFCachePolicyCacheThenNetwork];
     }
-    
+
     /*
      This query will result in an error if the schema hasn't been set beforehand. While Parse usually handles this automatically, this is not the case for a compound query such as this one. The error thrown is:
      
@@ -300,7 +300,7 @@
      
      You'll notice that these correspond to each of the fields used by the preceding query.
      */
-    
+
     return query;
 }
 
@@ -327,14 +327,17 @@
             cell = [[PAPPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             [cell.photoButton addTarget:self action:@selector(didTapOnPhotoAction:) forControlEvents:UIControlEventTouchUpInside];
         }
-        
+
         cell.photoButton.tag = indexPath.section;
         cell.imageView.image = [UIImage imageNamed:@"PlaceholderPhoto.png"];
-        cell.imageView.file = [object objectForKey:kPAPPhotoPictureKey];
         
-        // PFQTVC will take care of asynchronously downloading files, but will only load them when the tableview is not moving. If the data is there, let's load it right away.
-        if ([cell.imageView.file isDataAvailable]) {
-            [cell.imageView loadInBackground];
+        if (object) {
+            cell.imageView.file = [object objectForKey:kPAPPhotoPictureKey];
+            
+            // PFQTVC will take care of asynchronously downloading files, but will only load them when the tableview is not moving. If the data is there, let's load it right away.
+            if ([cell.imageView.file isDataAvailable]) {
+                [cell.imageView loadInBackground];
+            }
         }
 
         return cell;

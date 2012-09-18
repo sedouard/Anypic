@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Parse. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 @interface PAPCache : NSObject
 
 + (id)sharedCache;

@@ -61,14 +61,14 @@
 #pragma mark UIApplicationDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
+
     // ****************************************************************************
     // Parse initialization
     // [Parse setApplicationId:@"APPLICATION_ID" clientKey:@"CLIENT_KEY"];
     //
     // Make sure to update your URL scheme to match this facebook id. It should be "fbFACEBOOK_APP_ID" where FACEBOOK_APP_ID is your Facebook app's id.
     // You may set one up at https://developers.facebook.com/apps
-    // [PFFacebookUtils initializeWithApplicationId:@"FACEBOOK_APP_ID"]; 
+    // [PFFacebookUtils initializeWithApplicationId:@"FACEBOOK_APP_ID"];
     // ****************************************************************************
     
     if (application.applicationIconBadgeNumber != 0) {
@@ -182,8 +182,9 @@
         [self.hud setDimBackground:YES];
     }
     
-    [[PFFacebookUtils facebook] requestWithGraphPath:@"me/?fields=name,picture"
-                                         andDelegate:self];
+    PF_FBRequest *request = [PF_FBRequest requestForGraphPath:@"me/?fields=name,picture"];
+    [request setDelegate:self];
+    [request startWithCompletionHandler:NULL];
 
     // Subscribe to private push channel
     if (user) {
@@ -203,17 +204,16 @@
     
     if (data) {
         // we have friends data
-        NSMutableArray *facebookIds = [[NSMutableArray alloc] initWithCapacity:[data count]];
+        NSMutableArray *facebookIds = [[NSMutableArray alloc] initWithCapacity:data.count];
         for (NSDictionary *friendData in data) {
             [facebookIds addObject:[friendData objectForKey:@"id"]];
         }
-
+        
         // cache friend data
         [[PAPCache sharedCache] setFacebookFriends:facebookIds];
-
+        
         if (![[PFUser currentUser] objectForKey:kPAPUserAlreadyAutoFollowedFacebookFriendsKey]) {
             [self.hud setLabelText:@"Following Friends"];
-            NSLog(@"Auto-following");
             firstLaunch = YES;
             
             [[PFUser currentUser] setObject:[NSNumber numberWithBool:YES] forKey:kPAPUserAlreadyAutoFollowedFacebookFriendsKey];
@@ -222,11 +222,18 @@
             // find common Facebook friends already using Anypic
             PFQuery *facebookFriendsQuery = [PFUser query];
             [facebookFriendsQuery whereKey:kPAPUserFacebookIDKey containedIn:facebookIds];
-                        
-            NSArray *anypicFriends = [facebookFriendsQuery findObjects:&error];
+            
+            // auto-follow users which match this query
+            PFQuery *autofollowUsersQuery = [PFUser query];
+            [autofollowUsersQuery whereKey:kPAPUserFacebookIDKey containedIn:kPAPAutoFollowUserFacebookIds]; // Pass an array of Facebook IDs for people you want your app to auto-follow. The Anypic version in the App Store auto-follows Parse employees, for example.
+            
+            // combined query
+            PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:autofollowUsersQuery,facebookFriendsQuery, nil]];
+            
+            NSArray *anypicFriends = [query findObjects:&error];
+
             if (!error) {
                 [anypicFriends enumerateObjectsUsingBlock:^(PFUser *newFriend, NSUInteger idx, BOOL *stop) {
-                    NSLog(@"Join activity for %@", [newFriend objectForKey:kPAPUserDisplayNameKey]);
                     PFObject *joinActivity = [PFObject objectWithClassName:kPAPActivityClassKey];
                     [joinActivity setObject:[PFUser currentUser] forKey:kPAPActivityFromUserKey];
                     [joinActivity setObject:newFriend forKey:kPAPActivityToUserKey];
@@ -238,10 +245,6 @@
 
                     // make sure our join activity is always earlier than a follow
                     [joinActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                        if (succeeded) {
-                            NSLog(@"Followed %@", [newFriend objectForKey:kPAPUserDisplayNameKey]);
-                        }
-
                         [PAPUtility followUserInBackground:newFriend block:^(BOOL succeeded, NSError *error) {
                             // This block will be executed once for each friend that is followed.
                             // We need to refresh the timeline when we are following at least a few friends
@@ -260,10 +263,9 @@
                 [self logOut];
                 return;
             }
-
+            
             if (!error) {
                 [MBProgressHUD hideHUDForView:self.navController.presentedViewController.view animated:NO];
-                
                 if (anypicFriends.count > 0) {
                     self.hud = [MBProgressHUD showHUDAddedTo:self.homeViewController.view animated:NO];
                     [self.hud setDimBackground:YES];
@@ -288,7 +290,9 @@
             [[PFUser currentUser] setObject:facebookId forKey:kPAPUserFacebookIDKey];
         }
         
-        [[PFFacebookUtils facebook] requestWithGraphPath:@"me/friends" andDelegate:self];
+        PF_FBRequest *request = [PF_FBRequest requestForMyFriends];
+        [request setDelegate:self];
+        [request startWithCompletionHandler:nil];
     }
 }
 
@@ -339,7 +343,7 @@
     [self presentLoginViewControllerAnimated:YES];
 }
 
-- (void)presentTabBarController {
+- (void)presentTabBarController {    
     self.tabBarController = [[PAPTabBarController alloc] init];
     self.homeViewController = [[PAPHomeViewController alloc] initWithStyle:UITableViewStylePlain];
     [self.homeViewController setFirstLaunch:firstLaunch];
@@ -401,11 +405,11 @@
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kPAPUserDefaultsActivityFeedViewControllerLastRefreshKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    // Unsubscribe from push notifications
+    // Unsubscribe from push notifications by clearing the channels key (leaving only broadcast enabled).
+    [[PFInstallation currentInstallation] setObject:@[@""] forKey:kPAPInstallationChannelsKey];
     [[PFInstallation currentInstallation] removeObjectForKey:kPAPInstallationUserKey];
-    [[PFInstallation currentInstallation] removeObject:[[PFUser currentUser] objectForKey:kPAPUserPrivateChannelKey] forKey:kPAPInstallationChannelsKey];
-    [[PFInstallation currentInstallation] saveEventually];
-
+    [[PFInstallation currentInstallation] saveInBackground];
+    
     // Log out
     [PFUser logOut];
     
@@ -481,8 +485,8 @@
                 // check if this photo is already available locally.
 
                 PFObject *targetPhoto = [PFObject objectWithoutDataWithClassName:kPAPPhotoClassKey objectId:photoObjectId];
-                for (PFObject *photo in [self.homeViewController objects]) {
-                    if ([[photo objectId] isEqualToString:photoObjectId]) {
+                for (PFObject *photo in self.homeViewController.objects) {
+                    if ([photo.objectId isEqualToString:photoObjectId]) {
                         NSLog(@"Found a local copy");
                         targetPhoto = photo;
                         break;
@@ -528,6 +532,7 @@
 
 - (BOOL)shouldProceedToMainInterface:(PFUser *)user {
     if ([PAPUtility userHasValidFacebookData:[PFUser currentUser]]) {
+        NSLog(@"User has valid Facebook data, granting permission to use app.");
         [MBProgressHUD hideHUDForView:self.navController.presentedViewController.view animated:YES];
         [self presentTabBarController];
 
