@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Parse. All rights reserved.
 //
 
-@interface PAPEditPhotoViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate, PF_FBRequestDelegate>
+@interface PAPEditPhotoViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate>
 
 - (id)initWithImage:(UIImage *)aImage;
 

@@ -207,8 +207,7 @@ static TTTTimeIntervalFormatter *timeFormatter;
 - (void)reloadLikeBar {
     self.likeUsers = [[PAPCache sharedCache] likersForPhoto:self.photo];
     [self setLikeButtonState:[[PAPCache sharedCache] isPhotoLikedByCurrentUser:self.photo]];
-    [likeButton addTarget:self action:@selector(didTapLikePhotoButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    [self setNeedsDisplay];
+    [likeButton addTarget:self action:@selector(didTapLikePhotoButtonAction:) forControlEvents:UIControlEventTouchUpInside];    
 }
 
 

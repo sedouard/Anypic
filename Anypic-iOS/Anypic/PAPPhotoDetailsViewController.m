@@ -24,6 +24,7 @@ enum ActionSheetTags {
 @interface PAPPhotoDetailsViewController ()
 @property (nonatomic, strong) UITextField *commentTextField;
 @property (nonatomic, strong) PAPPhotoDetailsHeaderView *headerView;
+@property (nonatomic, assign) BOOL likersQueryInProgress;
 @end
 
 static const CGFloat kPAPCellInsetWidth = 20.0f;
@@ -48,6 +49,8 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
         // Set query table view properties
         self.className = kPAPActivityClassKey;
         self.objectsPerPage = 10;
+        
+        self.likersQueryInProgress = NO;
     }
     return self;
 }
@@ -104,8 +107,14 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
+
     [self.headerView reloadLikeBar];
+    
+    // we will only hit the network if we have no cached data for this photo
+    BOOL hasCachedLikers = [[PAPCache sharedCache] attributesForPhoto:self.photo] != nil;
+    if (!hasCachedLikers) {
+        [self loadLikers];
+    }
 }
 
 
@@ -118,19 +127,28 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
         
         PFObject *object = [self.objects objectAtIndex:indexPath.row];
         
-        if ([[object objectForKey:kPAPActivityTypeKey] isEqualToString:kPAPActivityTypeFollow] || [[object objectForKey:kPAPActivityTypeKey] isEqualToString:kPAPActivityTypeJoined]) {
-            hasActivityImage = NO;
-        } else {
-            hasActivityImage = YES;
+        if (object) {
+            if ([[object objectForKey:kPAPActivityTypeKey] isEqualToString:kPAPActivityTypeFollow] || [[object objectForKey:kPAPActivityTypeKey] isEqualToString:kPAPActivityTypeJoined]) {
+                hasActivityImage = NO;
+            } else {
+                hasActivityImage = YES;
+            }
+            
+            NSString *commentString = [[self.objects objectAtIndex:indexPath.row] objectForKey:kPAPActivityContentKey];
+            
+            PFUser *commentAuthor = (PFUser *)[object objectForKey:kPAPActivityFromUserKey];
+            
+            NSString *nameString = @"";
+            if (commentAuthor) {
+                nameString = [commentAuthor objectForKey:kPAPUserDisplayNameKey];
+            }
+            
+            return [PAPActivityCell heightForCellWithName:nameString contentString:commentString cellInsetWidth:kPAPCellInsetWidth];
         }
-        
-        NSString *commentString  = [[self.objects objectAtIndex:indexPath.row] objectForKey:kPAPActivityContentKey];
-        NSString *nameString = [(PFUser*)[object objectForKey:kPAPActivityFromUserKey] objectForKey:kPAPUserDisplayNameKey];
-
-        return [PAPActivityCell heightForCellWithName:nameString contentString:commentString cellInsetWidth:kPAPCellInsetWidth];
-    } else { // The pagination row
-        return 44.0f;
     }
+    
+    // The pagination row
+    return 44.0f;
 }
 
 
@@ -158,12 +176,13 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
 
 - (void)objectsDidLoad:(NSError *)error {
     [super objectsDidLoad:error];
-    NSLog(@"Objects did load");
+
     [self.headerView reloadLikeBar];
+    [self loadLikers];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object {
-    static NSString *cellID = @"commentCell";
+    static NSString *cellID = @"CommentCell";
 
     // Try to dequeue a cell and create one if necessary
     PAPBaseTextCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
@@ -227,7 +246,7 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Could not post comment" message:@"This photo was deleted by its owner" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
                 [alert show];
                 [self.navigationController popViewControllerAnimated:YES];
-            } else {
+            } else if (succeeded) {
                 // refresh cache
                 
                 NSMutableSet *channelSet = [NSMutableSet setWithCapacity:self.objects.count];
@@ -240,9 +259,9 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
                         [channelSet addObject:privateChannelName];
                     }
                 }
-                //[channelSet addObject:[self.photo objectForKey:kPAPPhotoUserKey]];
-                [channelSet addObject:[[self.photo objectForKey:kPAPPhotoUserKey] objectForKey: kPAPUserPrivateChannelKey]];
                 
+                [channelSet addObject:[[self.photo objectForKey:kPAPPhotoUserKey] objectForKey: kPAPUserPrivateChannelKey]];
+
                 if (channelSet.count > 0) {
                     NSString *alert = [NSString stringWithFormat:@"%@: %@", [PAPUtility firstNameForDisplayName:[[PFUser currentUser] objectForKey:kPAPUserDisplayNameKey]], trimmedComment];
                     
@@ -366,5 +385,42 @@ static const CGFloat kPAPCellInsetWidth = 20.0f;
     [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height-kbSize.height) animated:YES];
 }
 
+- (void)loadLikers {
+    if (self.likersQueryInProgress) {
+        return;
+    }
+
+    self.likersQueryInProgress = YES;
+    PFQuery *query = [PAPUtility queryForActivitiesOnPhoto:photo cachePolicy:kPFCachePolicyNetworkOnly];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        self.likersQueryInProgress = NO;
+        if (error) {
+            [self.headerView reloadLikeBar];
+            return;
+        }
+        
+        NSMutableArray *likers = [NSMutableArray array];
+        NSMutableArray *commenters = [NSMutableArray array];
+        
+        BOOL isLikedByCurrentUser = NO;
+        
+        for (PFObject *activity in objects) {
+            if ([[activity objectForKey:kPAPActivityTypeKey] isEqualToString:kPAPActivityTypeLike] && [activity objectForKey:kPAPActivityFromUserKey]) {
+                [likers addObject:[activity objectForKey:kPAPActivityFromUserKey]];
+            } else if ([[activity objectForKey:kPAPActivityTypeKey] isEqualToString:kPAPActivityTypeComment] && [activity objectForKey:kPAPActivityFromUserKey]) {
+                [commenters addObject:[activity objectForKey:kPAPActivityFromUserKey]];
+            }
+            
+            if ([[[activity objectForKey:kPAPActivityFromUserKey] objectId] isEqualToString:[[PFUser currentUser] objectId]]) {
+                if ([[activity objectForKey:kPAPActivityTypeKey] isEqualToString:kPAPActivityTypeLike]) {
+                    isLikedByCurrentUser = YES;
+                }
+            }
+        }
+        
+        [[PAPCache sharedCache] setAttributesForPhoto:photo likers:likers commenters:commenters likedByCurrentUser:isLikedByCurrentUser];
+        [self.headerView reloadLikeBar];
+    }];
+}
 
 @end

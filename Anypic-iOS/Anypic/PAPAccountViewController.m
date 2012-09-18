@@ -150,9 +150,7 @@
     [queryFollowerCount whereKey:kPAPActivityTypeKey equalTo:kPAPActivityTypeFollow];
     [queryFollowerCount whereKey:kPAPActivityToUserKey equalTo:self.user];
     [queryFollowerCount setCachePolicy:kPFCachePolicyCacheThenNetwork];
-    NSLog(@"Cached: %d", [queryFollowerCount hasCachedResult]);
     [queryFollowerCount countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-        NSLog(@"Cached callback: %d", [queryFollowerCount hasCachedResult]);
         if (!error) {
             [followerCountLabel setText:[NSString stringWithFormat:@"%d follower%@", number, number==1?@"":@"s"]];
         }

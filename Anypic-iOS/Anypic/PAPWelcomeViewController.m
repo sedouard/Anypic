@@ -43,22 +43,21 @@
         [(AppDelegate*)[[UIApplication sharedApplication] delegate] logOut];
         return;
     }
-    
-    [PFFacebookUtils extendAccessTokenIfNeededForUser:[PFUser currentUser] block:^(BOOL succeeded, NSError *error) {
-        // Check if user is missing a Facebook ID
-        if ([PAPUtility userHasValidFacebookData:[PFUser currentUser]]) {
-            // User has Facebook ID.
 
-            // refresh Facebook friends on each launch
-            [[PFFacebookUtils facebook] requestWithGraphPath:@"me/friends" andDelegate:(AppDelegate*)[[UIApplication sharedApplication] delegate]];
-            
-        } else {
-            NSLog(@"User missing Facebook ID"); 
-            [[PFFacebookUtils facebook] requestWithGraphPath:@"me/?fields=name,picture,email" andDelegate:(AppDelegate*)[[UIApplication sharedApplication] delegate]];
-        }
-    }];
-    
-
+    // Check if user is missing a Facebook ID
+    if ([PAPUtility userHasValidFacebookData:[PFUser currentUser]]) {
+        // User has Facebook ID.
+        
+        // refresh Facebook friends on each launch
+        PF_FBRequest *request = [PF_FBRequest requestForMyFriends];
+        [request setDelegate:(AppDelegate*)[[UIApplication sharedApplication] delegate]];
+        [request startWithCompletionHandler:nil];
+    } else {
+        NSLog(@"User missing Facebook ID");
+        PF_FBRequest *request = [PF_FBRequest requestForGraphPath:@"me/?fields=name,picture,email"];
+        [request setDelegate:(AppDelegate*)[[UIApplication sharedApplication] delegate]];
+        [request startWithCompletionHandler:nil];
+    }
 }
 
 @end

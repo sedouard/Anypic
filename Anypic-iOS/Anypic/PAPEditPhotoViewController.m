@@ -167,8 +167,9 @@
     [self.scrollView setContentSize:scrollViewContentSize];
     
     CGPoint scrollViewContentOffset = self.scrollView.contentOffset;
-    scrollViewContentOffset.y += keyboardFrameEnd.size.height;
-    scrollViewContentOffset.y -= 42.0f;
+    // Align the bottom edge of the photo with the keyboard
+    scrollViewContentOffset.y = scrollViewContentOffset.y + keyboardFrameEnd.size.height*3.0f - [UIScreen mainScreen].bounds.size.height;
+    
     [self.scrollView setContentOffset:scrollViewContentOffset animated:YES];
 }
 
