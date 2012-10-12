@@ -134,13 +134,13 @@ static NSUInteger const kPAPCellPhotoNumLabelTag = 5;
     PFQuery *friendsQuery = [PFUser query];
     [friendsQuery whereKey:kPAPUserFacebookIDKey containedIn:facebookFriends];
     
-    // Query for all auto-followed users - they should show up here in case the user has unfollowed them,
-    NSMutableArray *autofollowUsers = [[NSMutableArray alloc] initWithArray:kPAPAutoFollowUserFacebookIds];
-    [autofollowUsers removeObject:[[PFUser currentUser] objectForKey:kPAPUserFacebookIDKey]]; // Just in case currentUser is in the autofollow, remove them from the suggested friends list.
-    PFQuery *autofollowUsersQuery = [PFUser query];
-    [autofollowUsersQuery whereKey:kPAPUserFacebookIDKey containedIn:autofollowUsers];
+    // Query for all Parse employees
+    NSMutableArray *parseEmployees = [[NSMutableArray alloc] initWithArray:kPAPParseEmployeeAccounts];
+    [parseEmployees removeObject:[[PFUser currentUser] objectForKey:kPAPUserFacebookIDKey]];
+    PFQuery *parseEmployeeQuery = [PFUser query];
+    [parseEmployeeQuery whereKey:kPAPUserFacebookIDKey containedIn:parseEmployees];
         
-    PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:friendsQuery, autofollowUsersQuery, nil]];
+    PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:friendsQuery, parseEmployeeQuery, nil]];
     query.cachePolicy = kPFCachePolicyNetworkOnly;
     
     if (self.objects.count == 0) {

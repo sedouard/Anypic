@@ -212,6 +212,10 @@
         // cache friend data
         [[PAPCache sharedCache] setFacebookFriends:facebookIds];
         
+        if ([[PFUser currentUser] objectForKey:kPAPUserFacebookFriendsKey]) {
+            [[PFUser currentUser] removeObjectForKey:kPAPUserFacebookFriendsKey];
+        }
+        
         if (![[PFUser currentUser] objectForKey:kPAPUserAlreadyAutoFollowedFacebookFriendsKey]) {
             [self.hud setLabelText:@"Following Friends"];
             firstLaunch = YES;
@@ -223,12 +227,12 @@
             PFQuery *facebookFriendsQuery = [PFUser query];
             [facebookFriendsQuery whereKey:kPAPUserFacebookIDKey containedIn:facebookIds];
             
-            // auto-follow users which match this query
-            PFQuery *autofollowUsersQuery = [PFUser query];
-            [autofollowUsersQuery whereKey:kPAPUserFacebookIDKey containedIn:kPAPAutoFollowUserFacebookIds]; // Pass an array of Facebook IDs for people you want your app to auto-follow. The Anypic version in the App Store auto-follows Parse employees, for example.
+            // auto-follow Parse employees
+            PFQuery *parseEmployeesQuery = [PFUser query];
+            [parseEmployeesQuery whereKey:kPAPUserFacebookIDKey containedIn:kPAPParseEmployeeAccounts];
             
             // combined query
-            PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:autofollowUsersQuery,facebookFriendsQuery, nil]];
+            PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:parseEmployeesQuery,facebookFriendsQuery, nil]];
             
             NSArray *anypicFriends = [query findObjects:&error];
 
