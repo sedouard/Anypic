@@ -1073,9 +1073,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/External\"",
-					"\"$(SRCROOT)/../hungry/ios-client/ParseStarterProject\"",
-					"\"$(SRCROOT)/../../Downloads\"",
-					"\"$(SRCROOT)/../../Desktop\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1086,10 +1083,7 @@
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/External/CrittercismSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = Anypic;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1105,18 +1099,12 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/External\"",
-					"\"$(SRCROOT)/../hungry/ios-client/ParseStarterProject\"",
-					"\"$(SRCROOT)/../../Downloads\"",
-					"\"$(SRCROOT)/../../Desktop\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/External/CrittercismSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = Anypic;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -1149,19 +1137,13 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/External\"",
-					"\"$(SRCROOT)/../hungry/ios-client/ParseStarterProject\"",
-					"\"$(SRCROOT)/../../Downloads\"",
-					"\"$(SRCROOT)/../../Desktop\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = TESTING;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/External/CrittercismSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = Anypic;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "D6A5A958-17C2-4AC8-A515-A27933509394";
 				VALIDATE_PRODUCT = YES;
@@ -1195,19 +1177,13 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/External\"",
-					"\"$(SRCROOT)/../hungry/ios-client/ParseStarterProject\"",
-					"\"$(SRCROOT)/../../Downloads\"",
-					"\"$(SRCROOT)/../../Desktop\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = TESTING;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/External/CrittercismSDK\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = Anypic;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "33A2D497-75AF-4AEC-9E3E-2126A76EAED4";
 				VALIDATE_PRODUCT = YES;
