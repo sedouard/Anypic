@@ -138,9 +138,6 @@
 		C4BE67C7157FC8F600A291C2 /* TextFieldComment.png in Resources */ = {isa = PBXBuildFile; fileRef = C4BE67C5157FC8F500A291C2 /* TextFieldComment.png */; };
 		C4BE67C8157FC8F600A291C2 /* TextFieldComment@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4BE67C6157FC8F500A291C2 /* TextFieldComment@2x.png */; };
 		C4CD219915ED790500BC387F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C4CD219815ED790500BC387F /* libsqlite3.dylib */; };
-		C4DE99CB1603D11600BC968A /* Default-fbFACEBOOK_APP_ID-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4DE99C81603D11600BC968A /* Default-fbFACEBOOK_APP_ID-568h@2x.png */; };
-		C4DE99CC1603D11600BC968A /* Default-fbFACEBOOK_APP_ID.png in Resources */ = {isa = PBXBuildFile; fileRef = C4DE99C91603D11600BC968A /* Default-fbFACEBOOK_APP_ID.png */; };
-		C4DE99CD1603D11600BC968A /* Default-fbFACEBOOK_APP_ID@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4DE99CA1603D11600BC968A /* Default-fbFACEBOOK_APP_ID@2x.png */; };
 		C4F101F4156C2D800061BC3E /* ActivityFeedBlank.png in Resources */ = {isa = PBXBuildFile; fileRef = C4F101EE156C2D800061BC3E /* ActivityFeedBlank.png */; };
 		C4F101F5156C2D800061BC3E /* ActivityFeedBlank@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4F101EF156C2D800061BC3E /* ActivityFeedBlank@2x.png */; };
 		C4F101F6156C2D800061BC3E /* HomeTimelineBlank.png in Resources */ = {isa = PBXBuildFile; fileRef = C4F101F0156C2D800061BC3E /* HomeTimelineBlank.png */; };
@@ -319,9 +316,6 @@
 		C4BE67C5157FC8F500A291C2 /* TextFieldComment.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TextFieldComment.png; sourceTree = "<group>"; };
 		C4BE67C6157FC8F500A291C2 /* TextFieldComment@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TextFieldComment@2x.png"; sourceTree = "<group>"; };
 		C4CD219815ED790500BC387F /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		C4DE99C81603D11600BC968A /* Default-fbFACEBOOK_APP_ID-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-fbFACEBOOK_APP_ID-568h@2x.png"; sourceTree = "<group>"; };
-		C4DE99C91603D11600BC968A /* Default-fbFACEBOOK_APP_ID.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-fbFACEBOOK_APP_ID.png"; sourceTree = "<group>"; };
-		C4DE99CA1603D11600BC968A /* Default-fbFACEBOOK_APP_ID@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-fbFACEBOOK_APP_ID@2x.png"; sourceTree = "<group>"; };
 		C4F101EE156C2D800061BC3E /* ActivityFeedBlank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ActivityFeedBlank.png; sourceTree = "<group>"; };
 		C4F101EF156C2D800061BC3E /* ActivityFeedBlank@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityFeedBlank@2x.png"; sourceTree = "<group>"; };
 		C4F101F0156C2D800061BC3E /* HomeTimelineBlank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HomeTimelineBlank.png; sourceTree = "<group>"; };
@@ -788,9 +782,6 @@
 				C4BE6701157FC7CA00A291C2 /* Default.png */,
 				C4BE6702157FC7CB00A291C2 /* Default@2x.png */,
 				C49F586116028A980027383F /* Default-568h@2x.png */,
-				C4DE99C91603D11600BC968A /* Default-fbFACEBOOK_APP_ID.png */,
-				C4DE99CA1603D11600BC968A /* Default-fbFACEBOOK_APP_ID@2x.png */,
-				C4DE99C81603D11600BC968A /* Default-fbFACEBOOK_APP_ID-568h@2x.png */,
 				C4BE6703157FC7CB00A291C2 /* Icon-72.png */,
 				C4BE6704157FC7CB00A291C2 /* Icon-72@2x.png */,
 				C4BE6705157FC7CC00A291C2 /* Icon-Small-50.png */,
@@ -980,9 +971,6 @@
 				C463AF9115BF1DAF007F834E /* AvatarPlaceholder@2x.png in Resources */,
 				C49F586216028A980027383F /* Default-568h@2x.png in Resources */,
 				C49F586416028AB50027383F /* BackgroundLogin-568h@2x.png in Resources */,
-				C4DE99CB1603D11600BC968A /* Default-fbFACEBOOK_APP_ID-568h@2x.png in Resources */,
-				C4DE99CC1603D11600BC968A /* Default-fbFACEBOOK_APP_ID.png in Resources */,
-				C4DE99CD1603D11600BC968A /* Default-fbFACEBOOK_APP_ID@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
