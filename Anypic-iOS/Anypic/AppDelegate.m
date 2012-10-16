@@ -212,10 +212,6 @@
         // cache friend data
         [[PAPCache sharedCache] setFacebookFriends:facebookIds];
         
-        if ([[PFUser currentUser] objectForKey:kPAPUserFacebookFriendsKey]) {
-            [[PFUser currentUser] removeObjectForKey:kPAPUserFacebookFriendsKey];
-        }
-        
         if (![[PFUser currentUser] objectForKey:kPAPUserAlreadyAutoFollowedFacebookFriendsKey]) {
             [self.hud setLabelText:@"Following Friends"];
             firstLaunch = YES;
