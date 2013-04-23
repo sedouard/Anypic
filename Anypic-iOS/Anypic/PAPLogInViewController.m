@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Mattieu Gamache-Asselin on 5/17/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPLogInViewController.h"
@@ -36,6 +36,9 @@
 
     [self.logInView setLogo:nil];
     [self.logInView addSubview:textLabel];
+    
+    self.fields = PFLogInFieldsUsernameAndPassword;
+    self.logInView.usernameField.placeholder = @"Enter your email";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {

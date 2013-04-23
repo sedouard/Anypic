@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Mattieu Gamache-Asselin on 5/25/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 typedef enum {
@@ -13,7 +13,8 @@ typedef enum {
 } PAPTabBarControllerViewControllerIndex;
 
 
-#define kPAPParseEmployeeAccounts [NSArray array]
+// Define an array of Facebook Ids for accounts to auto-follow on signup
+#define kPAPAutoFollowAccountFacebookIds @[ ]
 
 #pragma mark - NSUserDefaults
 extern NSString *const kPAPUserDefaultsActivityFeedViewControllerLastRefreshKey;
@@ -45,7 +46,6 @@ extern NSString *const kPAPEditPhotoViewControllerUserInfoCommentKey;
 
 // Field keys
 extern NSString *const kPAPInstallationUserKey;
-extern NSString *const kPAPInstallationChannelsKey;
 
 
 #pragma mark - PFObject Activity Class
@@ -75,7 +75,6 @@ extern NSString *const kPAPUserProfilePicSmallKey;
 extern NSString *const kPAPUserProfilePicMediumKey;
 extern NSString *const kPAPUserFacebookFriendsKey;
 extern NSString *const kPAPUserAlreadyAutoFollowedFacebookFriendsKey;
-extern NSString *const kPAPUserPrivateChannelKey;
 
 
 #pragma mark - PFObject Photo Class

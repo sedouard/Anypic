@@ -48,7 +48,8 @@
  
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
- 
+#import <netinet/in.h>
+
 typedef enum {
     NotReachable = 0,
     ReachableViaWiFi,
@@ -61,7 +62,7 @@ typedef enum {
     BOOL localWiFiRef;
     SCNetworkReachabilityRef reachabilityRef;
 }
- 
+
 //reachabilityWithHostName- Use to check the reachability of a particular host name. 
 + (Reachability*) reachabilityWithHostName: (NSString*) hostName;
  

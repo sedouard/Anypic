@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Mattieu Gamache-Asselin on 5/18/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 @interface PAPUtility : NSObject
@@ -23,8 +23,6 @@
 + (void)followUsersEventually:(NSArray *)users block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
 + (void)unfollowUserEventually:(PFUser *)user;
 + (void)unfollowUsersEventually:(NSArray *)users;
-
-+ (void)sendFollowingPushNotification:(PFUser *)user;
 
 + (void)drawSideDropShadowForRect:(CGRect)rect inContext:(CGContextRef)context;
 + (void)drawSideAndBottomDropShadowForRect:(CGRect)rect inContext:(CGContextRef)context;

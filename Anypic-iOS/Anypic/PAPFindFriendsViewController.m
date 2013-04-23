@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Mattieu Gamache-Asselin on 5/9/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPFindFriendsViewController.h"
@@ -52,8 +52,12 @@ static NSUInteger const kPAPCellPhotoNumLabelTag = 5;
         // Whether the built-in pull-to-refresh is enabled
         self.pullToRefreshEnabled = YES;
         
-        // Whether the built-in pagination is enabled
-        self.paginationEnabled = YES;
+        // Whether the built-in pull-to-refresh is enabled
+        if (NSClassFromString(@"UIRefreshControl")) {
+            self.pullToRefreshEnabled = NO;
+        } else {
+            self.pullToRefreshEnabled = YES;
+        }
         
         // The number of objects to show per page
         self.objectsPerPage = 15;
@@ -110,6 +114,15 @@ static NSUInteger const kPAPCellPhotoNumLabelTag = 5;
         [self.headerView addSubview:separatorImage];
         [self.tableView setTableHeaderView:self.headerView];
     }
+    
+    if (NSClassFromString(@"UIRefreshControl")) {
+        // Use the new iOS 6 refresh control.
+        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        self.refreshControl = refreshControl;
+        self.refreshControl.tintColor = [UIColor colorWithRed:73.0f/255.0f green:55.0f/255.0f blue:35.0f/255.0f alpha:1.0f];
+        [self.refreshControl addTarget:self action:@selector(refreshControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+        self.pullToRefreshEnabled = NO;
+    }
 }
 
 
@@ -134,11 +147,11 @@ static NSUInteger const kPAPCellPhotoNumLabelTag = 5;
     PFQuery *friendsQuery = [PFUser query];
     [friendsQuery whereKey:kPAPUserFacebookIDKey containedIn:facebookFriends];
     
-    // Query for all Parse employees
-    NSMutableArray *parseEmployees = [[NSMutableArray alloc] initWithArray:kPAPParseEmployeeAccounts];
-    [parseEmployees removeObject:[[PFUser currentUser] objectForKey:kPAPUserFacebookIDKey]];
+    // Query for all auto-follow accounts
+    NSMutableArray *autoFollowAccountFacebookIds = [[NSMutableArray alloc] initWithArray:kPAPAutoFollowAccountFacebookIds];
+    [autoFollowAccountFacebookIds removeObject:[[PFUser currentUser] objectForKey:kPAPUserFacebookIDKey]];
     PFQuery *parseEmployeeQuery = [PFUser query];
-    [parseEmployeeQuery whereKey:kPAPUserFacebookIDKey containedIn:parseEmployees];
+    [parseEmployeeQuery whereKey:kPAPUserFacebookIDKey containedIn:autoFollowAccountFacebookIds];
         
     PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:friendsQuery, parseEmployeeQuery, nil]];
     query.cachePolicy = kPFCachePolicyNetworkOnly;
@@ -155,6 +168,10 @@ static NSUInteger const kPAPCellPhotoNumLabelTag = 5;
 - (void)objectsDidLoad:(NSError *)error {
     [super objectsDidLoad:error];
     
+    if (NSClassFromString(@"UIRefreshControl")) {
+        [self.refreshControl endRefreshing];
+    }
+
     PFQuery *isFollowingQuery = [PFQuery queryWithClassName:kPAPActivityClassKey];
     [isFollowingQuery whereKey:kPAPActivityFromUserKey equalTo:[PFUser currentUser]];
     [isFollowingQuery whereKey:kPAPActivityTypeKey equalTo:kPAPActivityTypeFollow];
@@ -531,6 +548,10 @@ static NSUInteger const kPAPCellPhotoNumLabelTag = 5;
 - (void)followUsersTimerFired:(NSTimer *)timer {
     [self.tableView reloadData];
     [[NSNotificationCenter defaultCenter] postNotificationName:PAPUtilityUserFollowingChangedNotification object:nil];
+}
+
+- (void)refreshControlValueChanged:(UIRefreshControl *)refreshControl {
+    [self loadObjects];
 }
 
 @end

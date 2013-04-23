@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Héctor Ramos on 5/2/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPAccountViewController.h"
@@ -208,12 +208,12 @@
 
 - (PFQuery *)queryForTable {
     if (!self.user) {
-        PFQuery *query = [PFQuery queryWithClassName:self.className];
+        PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
         [query setLimit:0];
         return query;
     }
     
-    PFQuery *query = [PFQuery queryWithClassName:self.className];
+    PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
     query.cachePolicy = kPFCachePolicyNetworkOnly;
     if (self.objects.count == 0) {
         query.cachePolicy = kPFCachePolicyCacheThenNetwork;

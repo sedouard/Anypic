@@ -3,13 +3,14 @@
 //  Anypic
 //
 //  Created by Héctor Ramos on 5/10/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPWelcomeViewController.h"
 #import "AppDelegate.h"
 
 @implementation PAPWelcomeViewController
+
 
 #pragma mark - UIViewController
 - (void)loadView {
@@ -49,14 +50,30 @@
         // User has Facebook ID.
         
         // refresh Facebook friends on each launch
-        PF_FBRequest *request = [PF_FBRequest requestForMyFriends];
-        [request setDelegate:(AppDelegate*)[[UIApplication sharedApplication] delegate]];
-        [request startWithCompletionHandler:nil];
+        [FBRequestConnection startForMyFriendsWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error) {
+                if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(facebookRequestDidLoad:)]) {
+                    [[UIApplication sharedApplication].delegate performSelector:@selector(facebookRequestDidLoad:) withObject:result];
+                }
+            } else {
+                if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(facebookRequestDidFailWithError:)]) {
+                    [[UIApplication sharedApplication].delegate performSelector:@selector(facebookRequestDidFailWithError:) withObject:error];
+                }
+            }
+        }];
     } else {
-        NSLog(@"User missing Facebook ID");
-        PF_FBRequest *request = [PF_FBRequest requestForGraphPath:@"me/?fields=name,picture,email"];
-        [request setDelegate:(AppDelegate*)[[UIApplication sharedApplication] delegate]];
-        [request startWithCompletionHandler:nil];
+        NSLog(@"Current user is missing their Facebook ID");
+        [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error) {
+                if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(facebookRequestDidLoad:)]) {
+                    [[UIApplication sharedApplication].delegate performSelector:@selector(facebookRequestDidLoad:) withObject:result];
+                }
+            } else {
+                if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(facebookRequestDidFailWithError:)]) {
+                    [[UIApplication sharedApplication].delegate performSelector:@selector(facebookRequestDidFailWithError:) withObject:error];
+                }
+            }
+        }];
     }
 }
 

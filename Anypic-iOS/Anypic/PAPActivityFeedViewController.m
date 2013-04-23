@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Mattieu Gamache-Asselin on 5/9/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPActivityFeedViewController.h"
@@ -24,11 +24,6 @@
 @property (nonatomic, strong) UIView *blankTimelineView;
 @end
 
-static NSString *const kPAPActivityTypeLikeString = @"liked your photo";
-static NSString *const kPAPActivityTypeCommentString = @"commented on your photo";
-static NSString *const kPAPActivityTypeFollowString = @"started following you";
-static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
-
 @implementation PAPActivityFeedViewController
 
 @synthesize settingsActionSheetDelegate;
@@ -45,14 +40,18 @@ static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
     self = [super initWithStyle:style];
     if (self) {
         // The className to query on
-        self.className = kPAPActivityClassKey;
-        
-        // Whether the built-in pull-to-refresh is enabled
-        self.pullToRefreshEnabled = YES;
+        self.parseClassName = kPAPActivityClassKey;
         
         // Whether the built-in pagination is enabled
         self.paginationEnabled = YES;
         
+        // Whether the built-in pull-to-refresh is enabled
+        if (NSClassFromString(@"UIRefreshControl")) {
+            self.pullToRefreshEnabled = NO;
+        } else {
+            self.pullToRefreshEnabled = YES;
+        }
+
         // The number of objects to show per page
         self.objectsPerPage = 15;          
     }
@@ -87,6 +86,15 @@ static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
     [self.blankTimelineView addSubview:button];
 
     lastRefresh = [[NSUserDefaults standardUserDefaults] objectForKey:kPAPUserDefaultsActivityFeedViewControllerLastRefreshKey];
+
+    if (NSClassFromString(@"UIRefreshControl")) {
+        // Use the new iOS 6 refresh control.
+        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        self.refreshControl = refreshControl;
+        self.refreshControl.tintColor = [UIColor colorWithRed:73.0f/255.0f green:55.0f/255.0f blue:35.0f/255.0f alpha:1.0f];
+        [self.refreshControl addTarget:self action:@selector(refreshControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+        self.pullToRefreshEnabled = NO;
+    }
 }
 
 
@@ -96,10 +104,10 @@ static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
     if (indexPath.row < self.objects.count) {
         PFObject *object = [self.objects objectAtIndex:indexPath.row];
         NSString *activityString = [PAPActivityFeedViewController stringForActivityType:(NSString*)[object objectForKey:kPAPActivityTypeKey]];
-        PFUser *user = (PFUser*)[object objectForKey:kPAPActivityFromUserKey];
-        NSString *nameString = @"";
 
-        if (user) {
+        PFUser *user = (PFUser*)[object objectForKey:kPAPActivityFromUserKey];
+        NSString *nameString = NSLocalizedString(@"Someone", nil);
+        if (user && [user objectForKey:kPAPUserDisplayNameKey] && [[user objectForKey:kPAPUserDisplayNameKey] length] > 0) {
             nameString = [user objectForKey:kPAPUserDisplayNameKey];
         }
         
@@ -132,12 +140,12 @@ static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
 - (PFQuery *)queryForTable {
     
     if (![PFUser currentUser]) {
-        PFQuery *query = [PFQuery queryWithClassName:self.className];
+        PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
         [query setLimit:0];
         return query;
     }
 
-    PFQuery *query = [PFQuery queryWithClassName:self.className];
+    PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
     [query whereKey:kPAPActivityToUserKey equalTo:[PFUser currentUser]];
     [query whereKey:kPAPActivityFromUserKey notEqualTo:[PFUser currentUser]];
     [query whereKeyExists:kPAPActivityFromUserKey];
@@ -152,17 +160,19 @@ static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
     //
     // If there is no network connection, we will hit the cache first.
     if (self.objects.count == 0 || ![[UIApplication sharedApplication].delegate performSelector:@selector(isParseReachable)]) {
-        NSLog(@"Loading from cache");
         [query setCachePolicy:kPFCachePolicyCacheThenNetwork];
     }
     
-
     return query;
 }
 
 - (void)objectsDidLoad:(NSError *)error {
     [super objectsDidLoad:error];
-    
+
+    if (NSClassFromString(@"UIRefreshControl")) {
+        [self.refreshControl endRefreshing];
+    }
+
     lastRefresh = [NSDate date];
     [[NSUserDefaults standardUserDefaults] setObject:lastRefresh forKey:kPAPUserDefaultsActivityFeedViewControllerLastRefreshKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -260,25 +270,24 @@ static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
 
 + (NSString *)stringForActivityType:(NSString *)activityType {
     if ([activityType isEqualToString:kPAPActivityTypeLike]) {
-        return kPAPActivityTypeLikeString;
+        return NSLocalizedString(@"liked your photo", nil);
     } else if ([activityType isEqualToString:kPAPActivityTypeFollow]) {
-        return kPAPActivityTypeFollowString;
+        return NSLocalizedString(@"started following you", nil);
     } else if ([activityType isEqualToString:kPAPActivityTypeComment]) {
-        return kPAPActivityTypeCommentString;
+        return NSLocalizedString(@"commented on your photo", nil);
     } else if ([activityType isEqualToString:kPAPActivityTypeJoined]) {
-        return kPAPActivityTypeJoinedString;
+        return NSLocalizedString(@"joined Anypic", nil);
     } else {
         return nil;
     }
 }
 
+
 #pragma mark - ()
-
-
 
 - (void)settingsButtonAction:(id)sender {
     settingsActionSheetDelegate = [[PAPSettingsActionSheetDelegate alloc] initWithNavigationController:self.navigationController];
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:settingsActionSheetDelegate cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"My Profile", @"Find Friends", @"Log Out", nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:settingsActionSheetDelegate cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:NSLocalizedString(@"My Profile", nil), NSLocalizedString(@"Find Friends", nil), NSLocalizedString(@"Log Out", nil), nil];
     
     [actionSheet showFromTabBar:self.tabBarController.tabBar];
 }
@@ -289,6 +298,10 @@ static NSString *const kPAPActivityTypeJoinedString = @"joined Anypic";
 }
 
 - (void)applicationDidReceiveRemoteNotification:(NSNotification *)note {
+    [self loadObjects];
+}
+
+- (void)refreshControlValueChanged:(UIRefreshControl *)refreshControl {
     [self loadObjects];
 }
 

@@ -3,12 +3,12 @@
 //  Anypic
 //
 //  Created by Héctor Ramos on 5/04/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPTabBarController.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, PFLogInViewControllerDelegate, PF_FBRequestDelegate, NSURLConnectionDataDelegate, UITabBarControllerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, NSURLConnectionDataDelegate, UITabBarControllerDelegate, PFLogInViewControllerDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
 
@@ -25,5 +25,7 @@
 
 - (void)logOut;
 
+- (void)facebookRequestDidLoad:(id)result;
+- (void)facebookRequestDidFailWithError:(NSError *)error;
 
 @end

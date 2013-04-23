@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Héctor Ramos on 5/2/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPPhotoTimelineViewController.h"
@@ -42,14 +42,18 @@
         self.outstandingSectionHeaderQueries = [NSMutableDictionary dictionary];
         
         // The className to query on
-        self.className = kPAPPhotoClassKey;
-        
-        // Whether the built-in pull-to-refresh is enabled
-        self.pullToRefreshEnabled = YES;
+        self.parseClassName = kPAPPhotoClassKey;
         
         // Whether the built-in pagination is enabled
         self.paginationEnabled = YES;
-        
+
+        // Whether the built-in pull-to-refresh is enabled
+        if (NSClassFromString(@"UIRefreshControl")) {
+            self.pullToRefreshEnabled = NO;
+        } else {
+            self.pullToRefreshEnabled = YES;
+        }
+
         // The number of objects to show per page
         self.objectsPerPage = 10;
         
@@ -72,7 +76,16 @@
     UIView *texturedBackgroundView = [[UIView alloc] initWithFrame:self.view.bounds];
     texturedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"BackgroundLeather.png"]];
     self.tableView.backgroundView = texturedBackgroundView;
-        
+
+    if (NSClassFromString(@"UIRefreshControl")) {
+        // Use the new iOS 6 refresh control.
+        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        self.refreshControl = refreshControl;
+        self.refreshControl.tintColor = [UIColor colorWithRed:73.0f/255.0f green:55.0f/255.0f blue:35.0f/255.0f alpha:1.0f];
+        [self.refreshControl addTarget:self action:@selector(refreshControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+        self.pullToRefreshEnabled = NO;
+    }
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidPublishPhoto:) name:PAPTabBarControllerDidFinishEditingPhotoNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userFollowingChanged:) name:PAPUtilityUserFollowingChangedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidDeletePhoto:) name:PAPPhotoDetailsViewControllerUserDeletedPhotoNotification object:nil];
@@ -245,7 +258,7 @@
 
 - (PFQuery *)queryForTable {
     if (![PFUser currentUser]) {
-        PFQuery *query = [PFQuery queryWithClassName:self.className];
+        PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
         [query setLimit:0];
         return query;
     }
@@ -256,11 +269,11 @@
     followingActivitiesQuery.cachePolicy = kPFCachePolicyNetworkOnly;
     followingActivitiesQuery.limit = 1000;
     
-    PFQuery *photosFromFollowedUsersQuery = [PFQuery queryWithClassName:self.className];
+    PFQuery *photosFromFollowedUsersQuery = [PFQuery queryWithClassName:self.parseClassName];
     [photosFromFollowedUsersQuery whereKey:kPAPPhotoUserKey matchesKey:kPAPActivityToUserKey inQuery:followingActivitiesQuery];
     [photosFromFollowedUsersQuery whereKeyExists:kPAPPhotoPictureKey];
 
-    PFQuery *photosFromCurrentUserQuery = [PFQuery queryWithClassName:self.className];
+    PFQuery *photosFromCurrentUserQuery = [PFQuery queryWithClassName:self.parseClassName];
     [photosFromCurrentUserQuery whereKey:kPAPPhotoUserKey equalTo:[PFUser currentUser]];
     [photosFromCurrentUserQuery whereKeyExists:kPAPPhotoPictureKey];
 
@@ -302,6 +315,14 @@
      */
 
     return query;
+}
+
+- (void)objectsDidLoad:(NSError *)error {
+    [super objectsDidLoad:error];
+    
+    if (NSClassFromString(@"UIRefreshControl")) {
+        [self.refreshControl endRefreshing];
+    }
 }
 
 - (PFObject *)objectAtIndexPath:(NSIndexPath *)indexPath {
@@ -461,7 +482,10 @@
 
 - (void)userDidDeletePhoto:(NSNotification *)note {
     // refresh timeline after a delay
-    [self performSelector:@selector(loadObjects) withObject:nil afterDelay:1.0f];
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC);
+    dispatch_after(time, dispatch_get_main_queue(), ^(void){
+        [self loadObjects];
+    });
 }
 
 - (void)userDidPublishPhoto:(NSNotification *)note {
@@ -484,6 +508,10 @@
         PAPPhotoDetailsViewController *photoDetailsVC = [[PAPPhotoDetailsViewController alloc] initWithPhoto:photo];
         [self.navigationController pushViewController:photoDetailsVC animated:YES];
     }
+}
+
+- (void)refreshControlValueChanged:(UIRefreshControl *)refreshControl {
+    [self loadObjects];
 }
 
 @end

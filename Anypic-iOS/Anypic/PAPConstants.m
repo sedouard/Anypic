@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Mattieu Gamache-Asselin on 5/25/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPConstants.h"
@@ -38,7 +38,6 @@ NSString *const kPAPEditPhotoViewControllerUserInfoCommentKey = @"comment";
 
 // Field keys
 NSString *const kPAPInstallationUserKey = @"user";
-NSString *const kPAPInstallationChannelsKey = @"channels";
 
 #pragma mark - Activity Class
 // Class key
@@ -66,7 +65,6 @@ NSString *const kPAPUserProfilePicSmallKey                      = @"profilePictu
 NSString *const kPAPUserProfilePicMediumKey                     = @"profilePictureMedium";
 NSString *const kPAPUserFacebookFriendsKey                      = @"facebookFriends";
 NSString *const kPAPUserAlreadyAutoFollowedFacebookFriendsKey   = @"userAlreadyAutoFollowedFacebookFriends";
-NSString *const kPAPUserPrivateChannelKey                       = @"channel";
 
 #pragma mark - Photo Class
 // Class key

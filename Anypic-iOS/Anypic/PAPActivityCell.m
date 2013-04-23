@@ -3,7 +3,7 @@
 //  Anypic
 //
 //  Created by Mattieu Gamache-Asselin on 5/14/12.
-//  Copyright (c) 2012 Parse. All rights reserved.
+//  Copyright (c) 2013 Parse. All rights reserved.
 //
 
 #import "PAPActivityCell.h"
@@ -33,12 +33,8 @@ static TTTTimeIntervalFormatter *timeFormatter;
 
 @end
 
-
 @implementation PAPActivityCell
 
-@synthesize activityImageButton,activityImageView;
-@synthesize activity = _activity;
-@synthesize hasActivityImage;
 
 #pragma mark - NSObject
 
@@ -127,8 +123,14 @@ static TTTTimeIntervalFormatter *timeFormatter;
     
     // Set name button properties and avatar image
     [self.avatarImageView setFile:[self.user objectForKey:kPAPUserProfilePicSmallKey]];
-    [self.nameButton setTitle:[self.user objectForKey:kPAPUserDisplayNameKey] forState:UIControlStateNormal];
-    [self.nameButton setTitle:[self.user objectForKey:kPAPUserDisplayNameKey] forState:UIControlStateHighlighted];
+    
+    NSString *nameString = NSLocalizedString(@"Someone", nil);
+    if (self.user && [self.user objectForKey:kPAPUserDisplayNameKey] && [[self.user objectForKey:kPAPUserDisplayNameKey] length] > 0) {
+        nameString = [self.user objectForKey:kPAPUserDisplayNameKey];
+    }
+    
+    [self.nameButton setTitle:nameString forState:UIControlStateNormal];
+    [self.nameButton setTitle:nameString forState:UIControlStateHighlighted];
     
     // If user is set after the contentText, we reset the content to include padding
     if (self.contentLabel.text) {
