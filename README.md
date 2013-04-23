@@ -7,7 +7,7 @@ You can get the [source code](https://github.com/ParsePlatform/Anypic) and creat
 
 ## iOS Setup
 
-Anypic requires Xcode 4.3+. It runs on iOS 5.0 and newer. The [tutorial](https://parse.com/tutorials/anypic) provides additional setup instructions.
+Anypic requires Xcode 4.5+. It runs on iOS 5.0 and newer. The [tutorial](https://parse.com/tutorials/anypic) provides additional setup instructions.
 
 #### Setting up your Xcode project
 
@@ -27,11 +27,7 @@ Anypic requires Xcode 4.3+. It runs on iOS 5.0 and newer. The [tutorial](https:/
 
 2. Set up a URL scheme for fbFACEBOOK_APP_ID, where FACEBOOK_APP_ID is your Facebook app's id. 
 
-3. Add your Facebook app id to `AppDelegate.m`:
-
-```objective-c
-[PFFacebookUtils initializeWithApplicationId:@"FACEBOOK_APP_ID];
-```
+3. Add your Facebook app id to `Info.plist` in the `FacebookAppId` key.
 
 ## Web Setup 
 
@@ -72,3 +68,7 @@ Anypic uses media queries to present different layouts on iPad, iOS and various 
 ```sass
 @media only screen and (max-width : 320px) { @import "320" }
 ```
+
+## Cloud Code
+
+Add your Parse app id and master key to `Anypic-iOS/CloudCode/config/global.json`, then type `parse deploy` from the command line at `Anypic-iOS/CloudCode`. See the [Cloud Code Guide](https://parse.com/docs/cloud_code_guide#clt) for more information about the `parse` CLI.
